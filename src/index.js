@@ -1,58 +1,85 @@
-/**
- * テンプレート文字列``の使い方、分割代入{}
- */
-// const myProfile = {
-//   name: "michitaka",
-//   age: 25
-// };
+const onClickAdd = () => {
+  //テキストボックスの値を取得し、初期化する
+  const inputText = document.getElementById("add-text").value;
+  document.getElementById("add-text").value = "";
 
-// const { name, age } = myProfile;
-
-// const message = `名前は${name}です。年齢は${age}です`;
-// console.log(message)
+  createIncompleteList(inputText);
+};
 
 /**
- * Mapの使い方
+ *
+ * 関数
  */
 
-// const nameArr = ["田中", "津田", "岩本"];
+//未完了リストから指定の要素を削除
+const deleteFromIncompleteList = (target, from = "incomplete-list") => {
+  document.getElementById(from).removeChild(target);
+};
 
-// for (let i = 0; i < nameArr.length; i++) {
-//   console.log(nameArr[i]);
-// }
-// nameArr.map((name, id) => console.log(`${id + 1} 番目は${name}です`));
+//未完了リストに追加する関数
+const createIncompleteList = (text) => {
+  // divタグ生成
+  const div = document.createElement("div");
+  div.className = "list-row";
 
-/**
- * Filterの使い方
- */
+  //liタグ生成
+  const li = document.createElement("li");
+  li.innerText = text;
 
-// const numArr = [1, 2, 3, 4, 5];
-// const odds = numArr.filter((num) => {
-//   return num % 2 === 1;
-// });
+  //button完了タグ生成
+  const completeButton = document.createElement("button");
+  completeButton.innerText = "完了";
+  completeButton.addEventListener("click", () => {
+    //押された削除ボタンの親タグ(div)を未完了リストから削除
+    deleteFromIncompleteList(deleteButton.parentNode);
 
-// console.log(odds);
+    const addTarget = completeButton.parentNode;
 
-/**
- * 三項演算子　関数のReturn部分でよく使う
- */
+    //TODOの内容テキスト取得
+    const text = addTarget.firstElementChild.innerText;
 
-// const checkSum = (num1, num2) => {
-//   return num1 + num2 > 100 ? "<100" : "OK";
-// };
+    // div以下を初期化
+    addTarget.textContent = null;
 
-// console.log(checkSum(50, 69));
+    //liタグ生成
+    const li = document.createElement("li");
+    li.innerText = text;
 
-/**
- * || と　&&の本当の意味
- */
+    //buttonタグ生成
+    const backButton = document.createElement("button");
+    backButton.innerText = "戻す";
+    backButton.addEventListener("click", () => {
+      // 押された戻すボタンの親タグ　（div）を完了リストから削除
+      deleteFromIncompleteList(backButton.parentNode, "complete-list");
+      const text = backButton.parentNode.firstElementChild.innerText;
+      createIncompleteList(text);
+    });
 
-//||は「または」ではなく、||の左がfalseなら右を返すという意味が本来正しい
-// const num = null;
-// const fee = num || "金額未設定です";
-// console.log(fee);
+    //divタグの子要素に各要素を設定
+    addTarget.appendChild(li);
+    addTarget.appendChild(backButton);
 
-//&&は「かつ」ではなく、&&の左がtrueなら右を返すという意味が本来正しい
-const num2 = null;
-const fee2 = num2 && "何か設定されました";
-console.log(fee2);
+    //完了リストに追加
+    document.getElementById("complete-list").appendChild(addTarget);
+  });
+
+  //button削除タグ生成
+  const deleteButton = document.createElement("button");
+  deleteButton.innerText = "削除";
+  deleteButton.addEventListener("click", () => {
+    //押された削除ボタンの親タグ(div)を未完了リストから削除
+    deleteFromIncompleteList(deleteButton.parentNode);
+  });
+
+  //divタグの子要素に各要素を設定
+  div.appendChild(li);
+  div.appendChild(completeButton);
+  div.appendChild(deleteButton);
+
+  //未完了のリストに追加
+  document.getElementById("incomplete-list").appendChild(div);
+};
+
+document
+  .getElementById("add-button")
+  .addEventListener("click", () => onClickAdd());
